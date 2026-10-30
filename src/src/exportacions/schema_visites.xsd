@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="visites">
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="visita" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+
+              <xs:element name="id_visita" type="xs:int"/>
+              <xs:element name="data" type="xs:date"/>
+              <xs:element name="area" type="xs:string"/>
+              <xs:element name="hora" type="xs:string"/>
+
+              <xs:element name="pacient">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="dni" type="xs:string"/>
+                    <xs:element name="nom" type="xs:string"/>
+                    <xs:element name="cognoms" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element name="metge">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="nom" type="xs:string"/>
+                    <xs:element name="cognoms" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element name="diagnostic" type="xs:string"/>
+
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
