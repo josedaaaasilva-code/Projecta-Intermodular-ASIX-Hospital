@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Llista de visites",
+  "type": "object",
+  "properties": {
+    "visites": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_visita": { "type": "integer" },
+          "data": { "type": "string", "format": "date" },
+          "area": { "type": "string" },
+          "hora": { "type": "string" },
+          "pacient": {
+            "type": "object",
+            "properties": {
+              "dni": { "type": "string" },
+              "nom": { "type": "string" },
+              "cognoms": { "type": "string" }
+            },
+            "required": ["dni", "nom", "cognoms"]
+          },
+          "metge": {
+            "type": "object",
+            "properties": {
+              "nom": { "type": "string" },
+              "cognoms": { "type": "string" }
+            },
+            "required": ["nom", "cognoms"]
+          },
+          "diagnostic": { "type": "string" }
+        },
+        "required": ["id_visita", "data", "area", "hora", "pacient", "metge", "diagnostic"]
+      }
+    }
+  },
+  "required": ["visites"]
+}

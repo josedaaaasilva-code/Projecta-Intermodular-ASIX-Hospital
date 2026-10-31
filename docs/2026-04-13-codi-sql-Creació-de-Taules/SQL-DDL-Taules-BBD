@@ -1,0 +1,139 @@
+CREATE TABLE PERSONAL (
+    id_personal INT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    cognoms VARCHAR(100) NOT NULL,
+    dni VARCHAR(12) UNIQUE NOT NULL,
+    adreca VARCHAR(150),
+    telefon VARCHAR(15)
+);
+
+CREATE TABLE METGE (
+    id_personal INT PRIMARY KEY,
+    especialitat_metge VARCHAR(100) NOT NULL,
+    dades_curriculum_metge TEXT,
+    FOREIGN KEY (id_personal) REFERENCES PERSONAL(id_personal) ON DELETE CASCADE
+);
+
+CREATE TABLE INFERMERIA (
+    id_personal INT PRIMARY KEY,
+    especialitat_infermeria VARCHAR(100) NOT NULL,
+    dades_curriculum_infermera TEXT,
+    id_metge INT,
+    FOREIGN KEY (id_personal) REFERENCES PERSONAL(id_personal) ON DELETE CASCADE,
+    FOREIGN KEY (id_metge) REFERENCES METGE(id_personal) ON DELETE SET NULL
+);
+
+CREATE TABLE VARI (
+    id_personal INT PRIMARY KEY,
+    tipus_tasca VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_personal) REFERENCES PERSONAL(id_personal) ON DELETE CASCADE
+);
+
+CREATE TABLE PLANTA (
+    num_planta INT PRIMARY KEY
+);
+
+CREATE TABLE HABITACIO (
+    id_habitacio INT PRIMARY KEY,
+    num_habitacio INT NOT NULL,
+    num_planta INT NOT NULL,
+    FOREIGN KEY (num_planta) REFERENCES PLANTA(num_planta) ON DELETE CASCADE,
+    UNIQUE (num_planta, num_habitacio)
+);
+
+CREATE TABLE QUIROFAN (
+    id_quirofan INT PRIMARY KEY,
+    num_quirofan INT NOT NULL,
+    num_planta INT NOT NULL,
+    FOREIGN KEY (num_planta) REFERENCES PLANTA(num_planta) ON DELETE CASCADE,
+    UNIQUE (num_planta, num_quirofan)
+);
+
+CREATE TABLE TIPUS_APARELL (
+    id_tipus INT PRIMARY KEY,
+    nom_tipus VARCHAR(50) NOT NULL
+);
+
+-- 9. TAULA APARELL_MEDIC
+CREATE TABLE APARELL_MEDIC (
+    id_aparell INT PRIMARY KEY,
+    nom_aparell VARCHAR(100) NOT NULL,
+    id_tipus INT NOT NULL,
+    FOREIGN KEY (id_tipus) REFERENCES TIPUS_APARELL(id_tipus) ON DELETE RESTRICT
+);
+
+CREATE TABLE APARELL_EN_QUIROFAN (
+    id_quirofan INT,
+    id_aparell INT,
+    quantitat INT NOT NULL CHECK (quantitat > 0),
+    PRIMARY KEY (id_quirofan, id_aparell),
+    FOREIGN KEY (id_quirofan) REFERENCES QUIROFAN(id_quirofan) ON DELETE CASCADE,
+    FOREIGN KEY (id_aparell) REFERENCES APARELL_MEDIC(id_aparell) ON DELETE RESTRICT
+);
+
+CREATE TABLE PACIENT (
+    id_pacient INT PRIMARY KEY,
+    nom_pacient VARCHAR(50) NOT NULL,
+    cognoms_pacient VARCHAR(100) NOT NULL,
+    dni_pacient VARCHAR(12) UNIQUE NOT NULL,
+    adreca_pacient VARCHAR(150),
+    telefon_pacient VARCHAR(15)
+);
+
+CREATE TABLE VISITA (
+    id_visita INT PRIMARY KEY,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    diagnostic TEXT,
+    id_pacient INT NOT NULL,
+    id_metge INT NOT NULL,
+    FOREIGN KEY (id_pacient) REFERENCES PACIENT(id_pacient) ON DELETE CASCADE,
+    FOREIGN KEY (id_metge) REFERENCES METGE(id_personal) ON DELETE RESTRICT
+);
+
+CREATE TABLE MEDICAMENT (
+    id_medicament INT PRIMARY KEY,
+    nom_medicament VARCHAR(100) NOT NULL,
+    descripcio TEXT
+);
+
+CREATE TABLE MEDICAMENT_RECEPTAT (
+    id_receptat INT PRIMARY KEY,
+    dosi VARCHAR(50) NOT NULL,
+    frequencia VARCHAR(50) NOT NULL,
+    id_visita INT NOT NULL,
+    id_medicament INT NOT NULL,
+    FOREIGN KEY (id_visita) REFERENCES VISITA(id_visita) ON DELETE CASCADE,
+    FOREIGN KEY (id_medicament) REFERENCES MEDICAMENT(id_medicament) ON DELETE RESTRICT
+);
+
+CREATE TABLE RESERVA_HABITACIO (
+    id_reserva INT PRIMARY KEY,
+    data_ingres_prevista DATE NOT NULL,
+    data_sortida_prevista DATE NOT NULL,
+    id_pacient INT NOT NULL,
+    id_habitacio INT NOT NULL,
+    FOREIGN KEY (id_pacient) REFERENCES PACIENT(id_pacient) ON DELETE CASCADE,
+    FOREIGN KEY (id_habitacio) REFERENCES HABITACIO(id_habitacio) ON DELETE CASCADE,
+    CHECK (data_sortida_prevista >= data_ingres_prevista)
+);
+
+CREATE TABLE OPERACIO (
+    id_operacio INT PRIMARY KEY,
+    data_operacio DATE NOT NULL,
+    hora_operacio TIME NOT NULL,
+    id_quirofan INT NOT NULL,
+    id_metge INT NOT NULL,
+    id_pacient INT NOT NULL,
+    FOREIGN KEY (id_quirofan) REFERENCES QUIROFAN(id_quirofan) ON DELETE RESTRICT,
+    FOREIGN KEY (id_metge) REFERENCES METGE(id_personal) ON DELETE RESTRICT,
+    FOREIGN KEY (id_pacient) REFERENCES PACIENT(id_pacient) ON DELETE CASCADE
+);
+
+CREATE TABLE ASSISTENCIA_OPERACIO (
+    id_operacio INT,
+    id_infermeria INT,
+    PRIMARY KEY (id_operacio, id_infermeria),
+    FOREIGN KEY (id_operacio) REFERENCES OPERACIO(id_operacio) ON DELETE CASCADE,
+    FOREIGN KEY (id_infermeria) REFERENCES INFERMERIA(id_personal) ON DELETE RESTRICT
+);
